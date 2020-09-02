@@ -395,11 +395,11 @@ This shows the cluster is up. It shows the URLs of the various Kubernetes compon
 
 #### Deploying your Node app
 
-The simplest way to deploy your app is to use the **kubectl run** command, which will create all the necessary components without having to deal with JSON or YAML.
+The simplest way to deploy your app is to use the **kubectl create** command, which will create all the necessary components without having to deal with JSON or YAML.
 
-`kubectl run kubia --image=knrt10/kubia --port=8080 --generator=run/v1`
+`kubectl create deployment kubia --image=knrt10/kubia`
 
-The `--image=knrt10/kubia` part obviously specifies the container image you want to run, and the `--port=8080` option tells Kubernetes that your app is listening on port 8080. The last flag (`--generator`) does require an explanation, though. Usually, you won’t use it, but you’re using it here so Kubernetes creates a **ReplicationController** instead of a Deployment.
+The `--image=knrt10/kubia` part obviously specifies the container image you want to run, and the `--port=8080` option tells Kubernetes that your app is listening on port 8080.
 
 #### Listing Pods
 
@@ -423,11 +423,11 @@ You’ll create a special service of type LoadBalancer because if you create a r
 
 To create the service, you’ll tell Kubernetes to expose the ReplicationController you created earlier:
 
-`kubectl expose rc kubia --type=LoadBalancer --name kubia-http`
+`kubectl expose deploy kubia --type=LoadBalancer --name kubia-http --target-port=8080 --port=80`
 > service "kubia-http" exposed
 
 
-**Important:** We’re using the abbreviation `rc` instead of `replicationcontroller`. Most resource types have an abbreviation like this so you don’t have to type the full name (for example, `po` for `pods`, `svc` for `services`, and so on).
+**Important:** We’re using the abbreviation `deploy` instead of `deployment`. Most resource types have an abbreviation like this so you don’t have to type the full name (for example, `po` for `pods`, `svc` for `services`, and so on).
 
 #### Listing Services
 
@@ -473,7 +473,7 @@ You’ve now told Kubernetes to make sure three instances of your pod are always
 
 Back to your replica count increase. Let’s list the ReplicationControllers again to see the updated replica count:
 
-`kubectl get rc`
+`kubectl get deploy`
 
 ```bash
 NAME      DESIRED   CURRENT   READY     AGE
